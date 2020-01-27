@@ -2,12 +2,12 @@
 /*******************************************************************************
 * FPDF                                                                         *
 *                                                                              *
-* Version: 1.82                                                                *
-* Date:    2019-12-07                                                          *
+* Version: 1.8                                                                 *
+* Date:    2015-11-29                                                          *
 * Author:  Olivier PLATHEY                                                     *
 *******************************************************************************/
 
-define('FPDF_VERSION','1.82');
+define('FPDF_VERSION','1.81'); 
 
 class FPDF
 {
@@ -71,7 +71,7 @@ protected $PDFVersion;         // PDF version number
 *                               Public methods                                 *
 *******************************************************************************/
 
-function __construct($orientation='P', $unit='mm', $size='A4')
+function __construct($orientation='P', $unit='pt', $size='A4')
 {
 	// Some checks
 	$this->_dochecks();
@@ -861,7 +861,7 @@ function Ln($h=null)
 		$this->y += $h;
 }
 
-function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
+function Image($file, $x=null, $y=null, $w=0, $h=25, $type='PNG', $link='')
 {
 	// Put an image on the page
 	if($file=='')
@@ -918,24 +918,15 @@ function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
 		$y = $this->y;
 		$this->y += $h;
 	}
-
+       //echo "<pre>"; var_dump($this->h);var_dump($this->w);
+       //var_dump($w*$this->k."==".$h*$this->k."==".$x*$this->k."==".($this->h-($y+$h))*$this->k.".==".$info['i']);
+       //var_dump($this->k);echo __LINE__." ".__FILE__;echo "</pre>";
 	if($x===null)
 		$x = $this->x;
 	$this->_out(sprintf('q %.2F 0 0 %.2F %.2F %.2F cm /I%d Do Q',$w*$this->k,$h*$this->k,$x*$this->k,($this->h-($y+$h))*$this->k,$info['i']));
+        //$this->_out(sprintf('q %.2F 0 0 %.2F %.2F %.2F cm /I%d Do Q',$w*$this->k,$h*$this->k,$x,$y,$info['i']));
 	if($link)
 		$this->Link($x,$y,$w,$h,$link);
-}
-
-function GetPageWidth()
-{
-	// Get current page width
-	return $this->w;
-}
-
-function GetPageHeight()
-{
-	// Get current page height
-	return $this->h;
 }
 
 function GetX()
@@ -973,8 +964,8 @@ function SetY($y, $resetX=true)
 function SetXY($x, $y)
 {
 	// Set x and y positions
-	$this->SetX($x);
-	$this->SetY($y,false);
+	$this->x = $x;
+	$this->y = $y;
 }
 
 function Output($dest='', $name='', $isUTF8=false)
@@ -1039,6 +1030,9 @@ protected function _dochecks()
 	// Check mbstring overloading
 	if(ini_get('mbstring.func_overload') & 2)
 		$this->Error('mbstring overloading must be disabled');
+	// Ensure runtime magic quotes are disabled
+	if(get_magic_quotes_runtime())
+		@set_magic_quotes_runtime(0);
 }
 
 protected function _checkoutput()
