@@ -918,13 +918,10 @@ function Image($file, $x=null, $y=null, $w=0, $h=25, $type='PNG', $link='')
 		$y = $this->y;
 		$this->y += $h;
 	}
-       //echo "<pre>"; var_dump($this->h);var_dump($this->w);
-       //var_dump($w*$this->k."==".$h*$this->k."==".$x*$this->k."==".($this->h-($y+$h))*$this->k.".==".$info['i']);
-       //var_dump($this->k);echo __LINE__." ".__FILE__;echo "</pre>";
+      
 	if($x===null)
 		$x = $this->x;
 	$this->_out(sprintf('q %.2F 0 0 %.2F %.2F %.2F cm /I%d Do Q',$w*$this->k,$h*$this->k,$x*$this->k,($this->h-($y+$h))*$this->k,$info['i']));
-        //$this->_out(sprintf('q %.2F 0 0 %.2F %.2F %.2F cm /I%d Do Q',$w*$this->k,$h*$this->k,$x,$y,$info['i']));
 	if($link)
 		$this->Link($x,$y,$w,$h,$link);
 }
